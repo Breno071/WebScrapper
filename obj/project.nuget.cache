@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "Ewv+2z7jeupUB+LRW6Yu9BG9QvOJQq1X3bcKSRKvlLIIKZhmuY2uA0ryy40wECNtXMyUCgGenFb35YM/tZ9fJQ==",
+  "success": true,
+  "projectFilePath": "D:\\Narde\\VS Code\\Projects\\.NET projects\\WebScrapper\\WebScrapper.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Narde\\.nuget\\packages\\htmlagilitypack\\1.11.37\\htmlagilitypack.1.11.37.nupkg.sha512"
+  ],
+  "logs": []
+}
