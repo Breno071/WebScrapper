@@ -1,15 +1,24 @@
-﻿using System.Xml.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using e_commerce.Models;
 using HtmlAgilityPack;
+using WebScrapper.Repository;
 
 namespace WebScrapper
 {
   class Program
   {
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
-      var url = "https://www.zoom.com.br/notebook";
+      //https://chicorei.com/camiseta/masculino/
+      Console.WriteLine("Digite uma URL Válida");
+      var url = Console.ReadLine();
+      if (string.IsNullOrEmpty(url) || !url.StartsWith("https"))
+      {
+        Console.WriteLine("URL Inválida");
+        return;
+      }
       HtmlWeb web = new HtmlWeb();
       var doc = web.Load(url);
 
@@ -17,38 +26,43 @@ namespace WebScrapper
       List<string> precoProdutos = new List<string>();
       List<string> imagensProdutos = new List<string>();
 
-      foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//h2[@class='Text_Text___RzD- Text_LabelSmRegular__2Lr6I']"))
-      {
 
-        Console.WriteLine(node.InnerText);
+      Console.WriteLine("Scrapping...");
+
+      //Pegando os nomes dos produtos
+      foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//span[@class='Cell_Infos__3NFGH']//span//h2"))
+      {
         nomesProdutos.Add(node.InnerText);
       }
 
-      foreach (var node in doc.DocumentNode.SelectNodes("//strong[@class='Text_Text___RzD- Text_LabelMdBold__3KBIj CellPrice_MainValue__3s0iP']"))
+      //Pegando os preços dos produtos
+      foreach (var node in doc.DocumentNode.SelectNodes("//span[@class='CellPrice_Price__23YPv Cell_Price__3qsB6']//span//strong"))
       {
 
-        Console.WriteLine(node.InnerText);
         precoProdutos.Add(node.InnerText);
       }
-      foreach (var node in doc.DocumentNode.SelectNodes("//span[@class='Cell_ImageContainer__2-Uda']//img"))
+
+      //Pegando as imagens dos produtos
+      foreach (var node in doc.DocumentNode.SelectNodes("//span[@class='Cell_Body__MIfCb']//span//div//img"))
       {
 
         var imagens = node.GetAttributeValue("src", "").Split(' ');
         foreach (var imagem in imagens)
         {
-          //Console.WriteLine(imagem);
+
           if (imagem.Contains("https"))
           {
             imagensProdutos.Add(imagem);
           }
         }
-
       }
-      foreach (var imagem in imagensProdutos)
+
+      for (int c = 0; c < imagensProdutos.Count; c++)
       {
-        Console.WriteLine(imagem);
+        Roupa_Praia produto = new Roupa_Praia(nomesProdutos[c], precoProdutos[c], imagensProdutos[c]);
+        await ProdutoRepository.CadastrarProduto(produto);
       }
-
+      Console.WriteLine("Done.");
     }
   }
 }
